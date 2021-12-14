@@ -18,8 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.example.demo.filter.JwtFilter;
@@ -83,18 +82,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
 		http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
 	}
 
-	// Used by spring security if CORS is enabled.
-	@Bean
-	UrlBasedCorsConfigurationSource corsConfigurationSource() {
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowCredentials(true);
-		config.addAllowedOriginPattern("*");
-		config.addAllowedHeader("*");
-		config.addAllowedMethod("*");
+//	// Used by spring security if CORS is enabled.
+//	@Bean
+//	UrlBasedCorsConfigurationSource corsConfigurationSource() {
+//		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//		CorsConfiguration config = new CorsConfiguration();
+//		config.setAllowCredentials(true);
+//		config.addAllowedOriginPattern("*");
+//		config.addAllowedHeader("*");
+//		config.addAllowedMethod("*");
+//
+//		source.registerCorsConfiguration("/**", config);
+//		return source;
+//	}
 
-		source.registerCorsConfiguration("/**", config);
-		return source;
+	@Override
+	public void addCorsMappings(CorsRegistry registry) {
+		registry.addMapping("/api/**").allowedOrigins("http://localhost:3000")
+				.allowedMethods("PUT", "DELETE", "POST", "GET").allowedHeaders("Authorization");
+
 	}
-
 }
