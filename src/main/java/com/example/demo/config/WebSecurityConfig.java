@@ -19,9 +19,7 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.example.demo.filter.JwtFilter;
@@ -87,15 +85,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
 
 	// Used by spring security if CORS is enabled.
 	@Bean
-	public CorsFilter corsFilter() {
+	UrlBasedCorsConfigurationSource corsConfigurationSource() {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		CorsConfiguration config = new CorsConfiguration();
 		config.setAllowCredentials(true);
-		config.addAllowedOriginPattern("*");
+		config.addAllowedOriginPattern("http://localhost:3000*");
 		config.addAllowedHeader("*");
 		config.addAllowedMethod("*");
+
 		source.registerCorsConfiguration("/**", config);
-		return new CorsFilter((CorsConfigurationSource) source);
+		return source;
 	}
 
 }
