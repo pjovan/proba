@@ -1,6 +1,7 @@
 package com.example.demo.util;
 
 import java.util.Collection;
+import java.util.Objects;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -60,6 +61,18 @@ public class MyUserDetails implements UserDetails {
 	@Override
 	public boolean isEnabled() {
 		return true;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MyUserDetails other = (MyUserDetails) obj;
+		return type == other.type && Objects.equals(user, other.user);
 	}
 
 }

@@ -22,10 +22,13 @@ public class JwtUtil {
 	private String SECRET_KEY;
 
 	public String extractUsername(String token) {
+		System.out.println("extractUSername " + token);
 		return extractClaim(token, Claims::getSubject);
 	}
 
 	public Date extractExpiration(String token) {
+		System.out.println("extractExpiration " + token);
+
 		return extractClaim(token, Claims::getExpiration);
 	}
 
@@ -35,6 +38,9 @@ public class JwtUtil {
 	}
 
 	private Claims extractAllClaims(String token) {
+		if (token.startsWith("Bearer")) {
+			token = token.substring(8, token.length() - 1);
+		}
 		return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
 	}
 
