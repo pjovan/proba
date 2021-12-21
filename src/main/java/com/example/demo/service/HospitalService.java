@@ -11,12 +11,15 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.HospitalDTO;
 import com.example.demo.entity.HospitalEntity;
+import com.example.demo.entity.UserEntity;
 import com.example.demo.exception.ResourceAlreadyExistsException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.mapper.DoctorEntityDtoMapper;
 import com.example.demo.mapper.HospitalEntityDtoMapper;
 import com.example.demo.mapper.NurseEntityDtoMapper;
 import com.example.demo.repository.HospitalRepozitory;
+import com.example.demo.repository.UserRepository;
+import com.example.demo.util.JwtUtil;
 
 @Service
 @Transactional
@@ -25,15 +28,20 @@ public class HospitalService {
 	HospitalEntityDtoMapper hospitalEntityDtoMapper;
 	DoctorEntityDtoMapper doctorEntityDtoMapper;
 	NurseEntityDtoMapper nurseEntityDtoMapper;
+	UserRepository userRepository;
+	JwtUtil jwt;
 
 	@Autowired
 	public HospitalService(HospitalRepozitory hospitalRepozitory, HospitalEntityDtoMapper hospitalEntityDtoMapper,
-			DoctorEntityDtoMapper doctorEntityDtoMapper, NurseEntityDtoMapper nurseEntityDtoMapper) {
+			DoctorEntityDtoMapper doctorEntityDtoMapper, NurseEntityDtoMapper nurseEntityDtoMapper, JwtUtil jwt,
+			UserRepository userRepository) {
 		super();
 		this.hospitalRepozitory = hospitalRepozitory;
 		this.hospitalEntityDtoMapper = hospitalEntityDtoMapper;
 		this.doctorEntityDtoMapper = doctorEntityDtoMapper;
 		this.nurseEntityDtoMapper = nurseEntityDtoMapper;
+		this.jwt = jwt;
+		this.userRepository = userRepository;
 	}
 
 	public HospitalDTO findById(Long id) {
@@ -45,7 +53,12 @@ public class HospitalService {
 		return hospitalEntityDtoMapper.toDto(hospital.get());
 	}
 
-	public List<HospitalDTO> getAll() {
+	public List<HospitalDTO> getAll(String token) {
+		String adminUsername = jwt.extractUsername(token);
+		Optional<UserEntity> adminEntity = userRepository.findByUsername(adminUsername);
+		if (adminEntity.isEmpty()) {
+			throw new ResourceNotFoundException("User: " + adminUsername + " is not in our database!");
+		}
 		List<HospitalEntity> entities = hospitalRepozitory.findAll();
 		return entities.stream().map(hospitalEntityDtoMapper::toDto).collect(Collectors.toList());
 	}
