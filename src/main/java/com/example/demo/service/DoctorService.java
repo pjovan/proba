@@ -131,6 +131,7 @@ public class DoctorService {
 		DoctorEntity doctor = exisitngDoctor.get();
 		doctor.setName(dto.getName());
 		doctor.setUsername(dto.getUsername());
+		doctor.setActive(dto.getActive());
 //		Password ne bi trebalo da se salje ovde. Treba da odvojimo update sifre, inf o doktoru i bolnica
 //		doctor.setPassword(dto.getPassword());
 

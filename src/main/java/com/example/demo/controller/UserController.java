@@ -13,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -75,5 +76,14 @@ public class UserController {
 			userService.changePassword(passwordChangeDto, token);
 			return ResponseEntity.status(HttpStatus.OK).body("Successfully changed password.");
 		}
+	}
+
+	@PutMapping("/deactivate/{username}")
+	public ResponseEntity<Object> deactivate(@RequestHeader(name = "Authorization") String token,
+			@PathVariable String username) {
+
+		userService.deactivate(username, token);
+		return ResponseEntity.status(HttpStatus.OK).body("Successfully deactivated doctor.");
+
 	}
 }
