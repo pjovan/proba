@@ -67,8 +67,7 @@ public class NurseController {
 	@PutMapping
 	public @ResponseBody ResponseEntity<Object> update(@RequestBody NurseDTO dto,
 			@RequestHeader(name = "Authorization") String token) {
-		nurseService.update(dto, token);
-		return ResponseEntity.status(HttpStatus.OK).body("Successfully updated the nurse.");
+		return ResponseEntity.status(HttpStatus.OK).body(nurseService.update(dto, token));
 
 	}
 

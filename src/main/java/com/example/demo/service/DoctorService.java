@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.DoctorDTO;
@@ -47,6 +48,9 @@ public class DoctorService {
 	HospitalRepozitory hospitalRepozitory;
 	HospitalEntityDtoMapper hospitalMapper;
 	JwtUtil jwt;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	@Autowired
 	public DoctorService(DoctorRepository doctorRepository, DoctorEntityDtoMapper doctorMapper,
@@ -110,6 +114,7 @@ public class DoctorService {
 			throw new ResourceAlreadyExistsException(dto.getUsername(), "Doctor with this username already exists.");
 		}
 		DoctorEntity doctor = doctorRepository.save(doctorMapper.toEntity(dto));
+		doctor.setPassword(passwordEncoder.encode(dto.getPassword()));
 		return doctorMapper.toDto(doctor);
 	}
 

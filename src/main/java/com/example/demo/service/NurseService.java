@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.NurseDTO;
 import com.example.demo.entity.NurseEntity;
+import com.example.demo.exception.ForbiddenException;
 import com.example.demo.exception.ResourceAlreadyExistsException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.mapper.HospitalEntityDtoMapper;
@@ -78,10 +79,8 @@ public class NurseService {
 			throw new ResourceNotFoundException("Nurse doesn't exist.");
 		}
 
-		String username = jwt.extractUsername(token);
-		Optional<NurseEntity> entity = nurseRepository.findByUsername(username);
-		if (entity.isEmpty()) {
-			throw new ResourceNotFoundException("Nurse doesn't exist");
+		if (!dto.getUsername().equals(jwt.extractUsername(token))) {
+			throw new ForbiddenException("You do not have permission for this action.");
 		}
 
 		NurseEntity nurse = existingNurse.get();
