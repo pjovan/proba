@@ -37,7 +37,6 @@ public class UserDTO implements Serializable {
 	protected String name;
 
 	@NotNull
-	@NotBlank
 	protected Boolean active;
 
 }

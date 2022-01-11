@@ -12,10 +12,11 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.DoctorDTO;
 import com.example.demo.dto.DoctorSimpleDTO;
+import com.example.demo.dto.HospitalDTO;
 import com.example.demo.dto.SpecializationDTO;
-import com.example.demo.dto.UserDTO;
 import com.example.demo.entity.DoctorEntity;
 import com.example.demo.entity.ExaminationEntity;
+import com.example.demo.entity.HospitalEntity;
 import com.example.demo.entity.NurseEntity;
 import com.example.demo.entity.PatientEntity;
 import com.example.demo.entity.UserEntity;
@@ -112,10 +113,14 @@ public class DoctorService {
 		return doctorMapper.toDto(doctor);
 	}
 
-	public void update(UserDTO dto, String token) {
-		Optional<DoctorEntity> exisitngDoctor = doctorRepository.findByUsername(jwt.extractUsername(token));
+	public DoctorDTO update(DoctorDTO dto, String token) {
+		Optional<DoctorEntity> exisitngDoctor = doctorRepository.findByUsername(dto.getUsername());
 		if (exisitngDoctor.isEmpty()) {
 			throw new ResourceNotFoundException("This doctor does't exist");
+		}
+
+		if (!dto.getUsername().equals(jwt.extractUsername(token))) {
+			throw new ForbiddenException("You do not have permission for this action.");
 		}
 
 		DoctorEntity doctor = exisitngDoctor.get();
@@ -124,16 +129,16 @@ public class DoctorService {
 //		Password ne bi trebalo da se salje ovde. Treba da odvojimo update sifre, inf o doktoru i bolnica
 //		doctor.setPassword(dto.getPassword());
 
-//		doctor.getHospitals().clear();
-//		for (HospitalDTO hospital : dto.getHospitals()) {
-//			HospitalEntity hospitalEntity = hospitalMapper.toEntity(hospital);
-//			doctor.addHospital(hospitalEntity);
-//		}
+		doctor.getHospitals().clear();
+		for (HospitalDTO hospital : dto.getHospitals()) {
+			HospitalEntity hospitalEntity = hospitalMapper.toEntity(hospital);
+			doctor.addHospital(hospitalEntity);
+		}
 
 //		doctor.setExaminations(
 //				dto.getExaminations().stream().map(examinationMapper::toEntity).collect(Collectors.toSet()));
 
-		doctorRepository.save(doctor);
+		return doctorMapper.toDto(doctorRepository.save(doctor));
 
 	}
 

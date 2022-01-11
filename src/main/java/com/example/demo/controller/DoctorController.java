@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.DoctorDTO;
 import com.example.demo.dto.DoctorSimpleDTO;
-import com.example.demo.dto.UserDTO;
 import com.example.demo.service.DoctorService;
 
 @RestController
@@ -69,7 +68,7 @@ public class DoctorController {
 
 	// Dodaj validaciju u DTO
 	@PutMapping
-	public ResponseEntity<Object> update(@RequestBody @Valid UserDTO dto,
+	public ResponseEntity<Object> update(@RequestBody @Valid DoctorDTO dto,
 			@RequestHeader(name = "Authorization") String token, BindingResult bindingResult) {
 
 		if (bindingResult.hasErrors()) {
@@ -81,8 +80,7 @@ public class DoctorController {
 			});
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error updating doctor " + errors);
 		}
-		doctorService.update(dto, token);
-		return ResponseEntity.status(HttpStatus.OK).body("Doctor successfully updated!");
+		return ResponseEntity.status(HttpStatus.OK).body(doctorService.update(dto, token));
 	}
 
 	/**
