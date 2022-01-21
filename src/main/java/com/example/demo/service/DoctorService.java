@@ -160,7 +160,7 @@ public class DoctorService {
 
 	// samo sestra bi trebalo da dodaje i brise examove, mozda izmestiti u nurse
 	// service
-	public DoctorDTO addExam(Long patientId, Long doctorId, LocalDateTime dateTime, String token) {
+	public DoctorDTO addExam(Long patientId, Long doctorId, LocalDateTime dateTime, String token, Long hospitalId) {
 
 		if (dateTime.isBefore(LocalDateTime.now())) {
 			throw new InvalidDateExcpetion("Entered date is in past.");
@@ -182,13 +182,19 @@ public class DoctorService {
 			throw new ResourceNotFoundException("Patient doesn't exist.");
 		}
 
+		Optional<HospitalEntity> hospitalEntity = hospitalRepozitory.findById(hospitalId);
+		if (hospitalEntity.isEmpty()) {
+			throw new ResourceNotFoundException("Hospital doesn't exist.");
+		}
+
 		DoctorEntity doctor = doctorEntity.get();
 		PatientEntity patient = patientEntity.get();
+		HospitalEntity hospital = hospitalEntity.get();
 
-		if (doctor.getExaminations().contains(new ExaminationEntity(doctor, patient, dateTime, ""))) {
+		if (doctor.getExaminations().contains(new ExaminationEntity(doctor, patient, dateTime, "", hospital))) {
 			throw new ResourceAlreadyExistsException(null, "This examination already exists.");
 		}
-		doctor.getExaminations().add(new ExaminationEntity(doctor, patient, dateTime, ""));
+		doctor.getExaminations().add(new ExaminationEntity(doctor, patient, dateTime, "", hospital));
 		doctor = doctorRepository.save(doctor);
 		return doctorMapper.toDto(doctor);
 

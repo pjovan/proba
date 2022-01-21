@@ -31,18 +31,24 @@ public class ExaminationEntity {
 	private PatientEntity patient;
 
 	@ManyToOne
+	@JoinColumn(name = "hospital_id")
+	private HospitalEntity hospital;
+
+	@ManyToOne
 	@MapsId("doctorId")
 	@JoinColumn(name = "doctor_id")
 	private DoctorEntity doctor;
 
 	private String diagnosis;
 
-	public ExaminationEntity(DoctorEntity doctor, PatientEntity patient, LocalDateTime dateTime, String diagnosis) {
+	public ExaminationEntity(DoctorEntity doctor, PatientEntity patient, LocalDateTime dateTime, String diagnosis,
+			HospitalEntity hospital) {
 		super();
 		this.id = new ExaminationId(doctor.getId(), patient.getId(), dateTime);
 		this.patient = patient;
 		this.doctor = doctor;
 		this.diagnosis = diagnosis;
+		this.hospital = hospital;
 	}
 
 	@Override
@@ -65,8 +71,8 @@ public class ExaminationEntity {
 
 	@Override
 	public String toString() {
-		return "ExaminationEntity [id=" + id + ", patient=" + patient + ", doctor=" + doctor + ", diagnosis="
-				+ diagnosis + "]";
+		return "ExaminationEntity [id=" + id + ", patient=" + patient + ", hospital=" + hospital + ", doctor=" + doctor
+				+ ", diagnosis=" + diagnosis + "]";
 	}
 
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.DoctorDTO;
 import com.example.demo.dto.HospitalDTO;
 import com.example.demo.service.HospitalService;
 
@@ -46,6 +47,12 @@ public class HospitalController {
 	public @ResponseBody ResponseEntity<List<HospitalDTO>> getAll(@RequestHeader(name = "Authorization") String token)
 			throws Exception {
 		return ResponseEntity.status(HttpStatus.OK).body(hospitalService.getAll(token));
+	}
+
+	@GetMapping("doctors")
+	public @ResponseBody ResponseEntity<List<HospitalDTO>> findByDoctor(
+			@RequestHeader(name = "Authorization") String token, @RequestBody DoctorDTO doctor) throws Exception {
+		return ResponseEntity.status(HttpStatus.OK).body(hospitalService.findByDoctor(doctor, token));
 	}
 
 	/**

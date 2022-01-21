@@ -56,8 +56,8 @@ public class DoctorEntity extends UserEntity {
 		hospital.getDoctors().remove(this);
 	}
 
-	public void addExamination(PatientEntity patient, LocalDateTime dateTime) {
-		ExaminationEntity examination = new ExaminationEntity(this, patient, dateTime, "");
+	public void addExamination(PatientEntity patient, LocalDateTime dateTime, HospitalEntity hospital) {
+		ExaminationEntity examination = new ExaminationEntity(this, patient, dateTime, "", hospital);
 		examinations.add(examination);
 		patient.getExaminations().add(examination);
 	}

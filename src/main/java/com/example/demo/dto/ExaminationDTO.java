@@ -23,13 +23,16 @@ public class ExaminationDTO implements Serializable {
 	private DoctorSimpleDTO doctor;
 	private PatientSimpleDTO patient;
 	private String diagnosis;
+	private HospitalDTO hospital;
 
-	public ExaminationDTO(DoctorSimpleDTO doctor, PatientSimpleDTO patient, LocalDateTime dateTime, String diagnosis) {
+	public ExaminationDTO(DoctorSimpleDTO doctor, PatientSimpleDTO patient, LocalDateTime dateTime, String diagnosis,
+			HospitalDTO hospital) {
 		super();
 		this.id = new ExaminationId(doctor.getId(), patient.getId(), dateTime);
 		this.diagnosis = diagnosis;
 		this.doctor = doctor;
 		this.patient = patient;
+		this.hospital = hospital;
 	}
 
 }

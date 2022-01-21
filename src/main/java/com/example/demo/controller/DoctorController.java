@@ -118,9 +118,10 @@ public class DoctorController {
 	 */
 	@PostMapping("/addExam")
 	public @ResponseBody ResponseEntity<Object> addExam(@RequestParam Long patientId, @RequestParam Long doctorId,
+			@RequestParam Long hospitalId,
 			@RequestParam(name = "dateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTime,
 			@RequestHeader(name = "Authorization") String token) {
-		doctorService.addExam(patientId, doctorId, dateTime, token);
+		doctorService.addExam(patientId, doctorId, dateTime, token, hospitalId);
 		return ResponseEntity.status(HttpStatus.OK).body("Successfully added examination.");
 
 	}

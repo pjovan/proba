@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -9,7 +10,9 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.dto.DoctorDTO;
 import com.example.demo.dto.HospitalDTO;
+import com.example.demo.entity.DoctorEntity;
 import com.example.demo.entity.HospitalEntity;
 import com.example.demo.entity.UserEntity;
 import com.example.demo.exception.ResourceAlreadyExistsException;
@@ -51,6 +54,24 @@ public class HospitalService {
 		}
 
 		return hospitalEntityDtoMapper.toDto(hospital.get());
+	}
+
+	public List<HospitalDTO> findByDoctor(DoctorDTO dto, String token) {
+		String adminUsername = jwt.extractUsername(token);
+		Optional<UserEntity> adminEntity = userRepository.findByUsername(adminUsername);
+		if (adminEntity.isEmpty()) {
+			throw new ResourceNotFoundException("User: " + adminUsername + " is not in our database!");
+		}
+
+		DoctorEntity doctor = doctorEntityDtoMapper.toEntity(dto);
+		List doctors = new ArrayList<DoctorEntity>();
+		doctors.add(doctor);
+		List<HospitalEntity> hospitals = hospitalRepozitory.findAllByDoctorsIn(doctors);
+		if (hospitals.isEmpty()) {
+			return new ArrayList<>();
+		}
+
+		return hospitals.stream().map(hospitalEntityDtoMapper::toDto).collect(Collectors.toList());
 	}
 
 	public List<HospitalDTO> getAll(String token) {
