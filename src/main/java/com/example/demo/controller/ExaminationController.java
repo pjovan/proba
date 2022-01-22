@@ -35,6 +35,14 @@ public class ExaminationController {
 		return ResponseEntity.status(HttpStatus.OK).body(examinationService.getAll(doctorId, token));
 	}
 
+	@GetMapping("/doctor")
+	public ResponseEntity<Object> getAll(@RequestHeader(name = "Authorization") String token,
+			@RequestParam Long doctorId, @RequestParam Long hospitalId) {
+
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(examinationService.getByDoctorAndHospital(doctorId, hospitalId, token));
+	}
+
 	/**
 	 * Updates diagnosis in an existing examination.
 	 * 
