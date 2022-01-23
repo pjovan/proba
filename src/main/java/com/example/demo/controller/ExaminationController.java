@@ -52,8 +52,8 @@ public class ExaminationController {
 	@PutMapping()
 	public ResponseEntity<Object> updateDiagnosis(@RequestBody UpdateDTO dto,
 			@RequestHeader(name = "Authorization") String token) {
-		examinationService.updateDiagnosis(dto, token);
-		return ResponseEntity.status(HttpStatus.OK).body("Successfully added diagnosis.");
+
+		return ResponseEntity.status(HttpStatus.OK).body(examinationService.updateDiagnosis(dto, token));
 	}
 
 }

@@ -14,6 +14,5 @@ public class UpdateDTO {
 	Long doctorId;
 	Long patientId;
 	LocalDateTime dateTime;
-	LocalDateTime newDateTime;
 	String Diagnosis;
 }
