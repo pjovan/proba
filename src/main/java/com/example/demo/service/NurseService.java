@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.NurseDTO;
 import com.example.demo.entity.NurseEntity;
-import com.example.demo.exception.ForbiddenException;
 import com.example.demo.exception.ResourceAlreadyExistsException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.mapper.HospitalEntityDtoMapper;
@@ -65,7 +64,7 @@ public class NurseService {
 	}
 
 	public NurseDTO save(NurseDTO dto) {
-		Optional<NurseEntity> entity = nurseRepository.findById(dto.getId());
+		Optional<NurseEntity> entity = nurseRepository.findByUsername(dto.getUsername());
 		if (entity.isPresent()) {
 			throw new ResourceAlreadyExistsException(dto.getUsername(), "Nurse already exists");
 		}
@@ -74,20 +73,14 @@ public class NurseService {
 	}
 
 	public NurseDTO update(NurseDTO dto, String token) {
-		Optional<NurseEntity> existingNurse = nurseRepository.findById(dto.getId());
+		Optional<NurseEntity> existingNurse = nurseRepository.findByUsername(jwt.extractUsername(token));
 		if (existingNurse.isEmpty()) {
 			throw new ResourceNotFoundException("Nurse doesn't exist.");
-		}
-
-		if (!dto.getUsername().equals(jwt.extractUsername(token))) {
-			throw new ForbiddenException("You do not have permission for this action.");
 		}
 
 		NurseEntity nurse = existingNurse.get();
 		nurse.setName(dto.getName());
 		nurse.setUsername(dto.getUsername());
-//		nurse.setPassword(dto.getPassword());
-//		nurse.setHospital(hospitalMapper.toEntity(dto.getHospital()));
 
 		return nurseEntityDtoMapper.toDto(nurseRepository.save(nurse));
 	}

@@ -119,30 +119,20 @@ public class DoctorService {
 	}
 
 	public DoctorDTO update(DoctorDTO dto, String token) {
-		Optional<DoctorEntity> exisitngDoctor = doctorRepository.findByUsername(dto.getUsername());
+		Optional<DoctorEntity> exisitngDoctor = doctorRepository.findByUsername(jwt.extractUsername(token));
 		if (exisitngDoctor.isEmpty()) {
 			throw new ResourceNotFoundException("This doctor does't exist");
-		}
-
-		if (!dto.getUsername().equals(jwt.extractUsername(token))) {
-			throw new ForbiddenException("You do not have permission for this action.");
 		}
 
 		DoctorEntity doctor = exisitngDoctor.get();
 		doctor.setName(dto.getName());
 		doctor.setUsername(dto.getUsername());
-		doctor.setActive(dto.getActive());
-//		Password ne bi trebalo da se salje ovde. Treba da odvojimo update sifre, inf o doktoru i bolnica
-//		doctor.setPassword(dto.getPassword());
 
 		doctor.getHospitals().clear();
 		for (HospitalDTO hospital : dto.getHospitals()) {
 			HospitalEntity hospitalEntity = hospitalMapper.toEntity(hospital);
 			doctor.addHospital(hospitalEntity);
 		}
-
-//		doctor.setExaminations(
-//				dto.getExaminations().stream().map(examinationMapper::toEntity).collect(Collectors.toSet()));
 
 		return doctorMapper.toDto(doctorRepository.save(doctor));
 
@@ -229,6 +219,15 @@ public class DoctorService {
 		doctor = doctorRepository.save(doctor);
 
 		return doctorMapper.toDto(doctor);
+	}
+
+	public DoctorDTO findByUsername(String token) {
+		String doctorUsername = jwt.extractUsername(token);
+
+		Optional<DoctorEntity> doctor = doctorRepository.findByUsername(doctorUsername);
+		DoctorDTO dto = doctorMapper.toDto(doctor.get());
+		dto.setPassword("");
+		return dto;
 	}
 
 }

@@ -53,6 +53,13 @@ public class DoctorController {
 		return ResponseEntity.status(HttpStatus.OK).body(doctorService.findByUsername(token, username));
 	}
 
+	@GetMapping("/myProfile")
+	public @ResponseBody ResponseEntity<Object> getDoctorFromToken(
+			@RequestHeader(name = "Authorization") String token) {
+
+		return ResponseEntity.status(HttpStatus.OK).body(doctorService.findByUsername(token));
+	}
+
 	@GetMapping
 	public @ResponseBody ResponseEntity<List<DoctorSimpleDTO>> getAll(
 			@RequestHeader(name = "Authorization") String token) {
