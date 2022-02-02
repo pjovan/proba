@@ -10,7 +10,6 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.dto.DoctorDTO;
 import com.example.demo.dto.HospitalDTO;
 import com.example.demo.entity.DoctorEntity;
 import com.example.demo.entity.HospitalEntity;
@@ -20,6 +19,7 @@ import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.mapper.DoctorEntityDtoMapper;
 import com.example.demo.mapper.HospitalEntityDtoMapper;
 import com.example.demo.mapper.NurseEntityDtoMapper;
+import com.example.demo.repository.DoctorRepository;
 import com.example.demo.repository.HospitalRepozitory;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.util.JwtUtil;
@@ -32,12 +32,13 @@ public class HospitalService {
 	DoctorEntityDtoMapper doctorEntityDtoMapper;
 	NurseEntityDtoMapper nurseEntityDtoMapper;
 	UserRepository userRepository;
+	DoctorRepository doctorRepository;
 	JwtUtil jwt;
 
 	@Autowired
 	public HospitalService(HospitalRepozitory hospitalRepozitory, HospitalEntityDtoMapper hospitalEntityDtoMapper,
 			DoctorEntityDtoMapper doctorEntityDtoMapper, NurseEntityDtoMapper nurseEntityDtoMapper, JwtUtil jwt,
-			UserRepository userRepository) {
+			UserRepository userRepository, DoctorRepository doctorRepository) {
 		super();
 		this.hospitalRepozitory = hospitalRepozitory;
 		this.hospitalEntityDtoMapper = hospitalEntityDtoMapper;
@@ -45,6 +46,7 @@ public class HospitalService {
 		this.nurseEntityDtoMapper = nurseEntityDtoMapper;
 		this.jwt = jwt;
 		this.userRepository = userRepository;
+		this.doctorRepository = doctorRepository;
 	}
 
 	public HospitalDTO findById(Long id) {
@@ -56,14 +58,14 @@ public class HospitalService {
 		return hospitalEntityDtoMapper.toDto(hospital.get());
 	}
 
-	public List<HospitalDTO> findByDoctor(DoctorDTO dto, String token) {
+	public List<HospitalDTO> findByDoctor(Long doctorId, String token) {
 		String adminUsername = jwt.extractUsername(token);
 		Optional<UserEntity> adminEntity = userRepository.findByUsername(adminUsername);
 		if (adminEntity.isEmpty()) {
 			throw new ResourceNotFoundException("User: " + adminUsername + " is not in our database!");
 		}
 
-		DoctorEntity doctor = doctorEntityDtoMapper.toEntity(dto);
+		DoctorEntity doctor = doctorRepository.findById(doctorId).get();
 		List doctors = new ArrayList<DoctorEntity>();
 		doctors.add(doctor);
 		List<HospitalEntity> hospitals = hospitalRepozitory.findAllByDoctorsIn(doctors);

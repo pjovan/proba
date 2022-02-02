@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.dto.DoctorDTO;
 import com.example.demo.dto.HospitalDTO;
 import com.example.demo.service.HospitalService;
 
@@ -51,8 +51,8 @@ public class HospitalController {
 
 	@GetMapping("doctors")
 	public @ResponseBody ResponseEntity<List<HospitalDTO>> findByDoctor(
-			@RequestHeader(name = "Authorization") String token, @RequestBody DoctorDTO doctor) throws Exception {
-		return ResponseEntity.status(HttpStatus.OK).body(hospitalService.findByDoctor(doctor, token));
+			@RequestHeader(name = "Authorization") String token, @RequestParam Long doctorId) throws Exception {
+		return ResponseEntity.status(HttpStatus.OK).body(hospitalService.findByDoctor(doctorId, token));
 	}
 
 	/**
