@@ -13,4 +13,5 @@ public class DoctorSimpleDTO {
 	private String name;
 	private String username;
 	private SpecializationDTO specialization;
+	private Boolean active;
 }

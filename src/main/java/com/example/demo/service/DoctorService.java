@@ -95,9 +95,24 @@ public class DoctorService {
 			throw new ResourceNotFoundException("User: " + username + " is not a nurse!");
 		}
 
-		return doctorRepository.findAll().stream().map(entity -> new DoctorSimpleDTO(entity.getId(), entity.getName(),
-				entity.getUsername(),
-				new SpecializationDTO(entity.getSpecialization().getId(), entity.getSpecialization().getName())))
+		return doctorRepository.findAll().stream()
+				.map(entity -> new DoctorSimpleDTO(entity.getId(), entity.getName(), entity.getUsername(),
+						new SpecializationDTO(entity.getSpecialization().getId(), entity.getSpecialization().getName()),
+						entity.getActive()))
+				.collect(Collectors.toList());
+	}
+
+	public List<DoctorSimpleDTO> getAllActive(String token) {
+		String username = jwt.extractUsername(token);
+		Optional<NurseEntity> nurseEntity = nurseRepository.findByUsername(username);
+		if (nurseEntity.isEmpty()) {
+			throw new ResourceNotFoundException("User: " + username + " is not a nurse!");
+		}
+
+		return doctorRepository.findByActiveTrue().stream()
+				.map(entity -> new DoctorSimpleDTO(entity.getId(), entity.getName(), entity.getUsername(),
+						new SpecializationDTO(entity.getSpecialization().getId(), entity.getSpecialization().getName()),
+						entity.getActive()))
 				.collect(Collectors.toList());
 	}
 
@@ -229,5 +244,4 @@ public class DoctorService {
 		dto.setPassword("");
 		return dto;
 	}
-
 }

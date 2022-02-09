@@ -67,6 +67,13 @@ public class DoctorController {
 
 	}
 
+	@GetMapping("/active")
+	public @ResponseBody ResponseEntity<List<DoctorSimpleDTO>> getAllActive(
+			@RequestHeader(name = "Authorization") String token) {
+		return ResponseEntity.status(HttpStatus.OK).body(doctorService.getAllActive(token));
+
+	}
+
 	/**
 	 * Updates doctor.
 	 * 
