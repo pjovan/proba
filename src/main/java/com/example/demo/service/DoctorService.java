@@ -168,7 +168,7 @@ public class DoctorService {
 	public DoctorDTO addExam(Long patientId, Long doctorId, LocalDateTime dateTime, String token, Long hospitalId) {
 
 		if (dateTime.isBefore(LocalDateTime.now())) {
-			throw new InvalidDateExcpetion("Entered date is in past.");
+			throw new InvalidDateExcpetion("Entered date is in the past.");
 		}
 
 		String username = jwt.extractUsername(token);
